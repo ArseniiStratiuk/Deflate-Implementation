@@ -103,11 +103,11 @@ class Lz77Decompressor:
         char = codeword.character
 
         if offset > 0:
+            # Handle overlapping matches
             start = len(self.buffer) - offset
             for i in range(length):
-                if start + i >= len(self.buffer):
-                    break
-                self.buffer.append(self.buffer[start + i])
+                # Use modulo to wrap around the available buffer
+                self.buffer.append(self.buffer[start + i % offset])
         self.buffer.append(char)
 
     def get_data(self):

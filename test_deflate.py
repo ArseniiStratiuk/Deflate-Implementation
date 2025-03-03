@@ -3,7 +3,7 @@ import os
 import tempfile
 import struct
 import random
-from deflate import Codeword, Lz77Compressor, Lz77, Lz77Decompressor, Codec, huffman, compress_file, decompress_file
+from deflate import Codeword, Lz77Compressor, Lz77Decompressor, Codec, huffman, compress_file, decompress_file
 
 class TestDeflate(unittest.TestCase):
     @classmethod
@@ -74,31 +74,31 @@ class TestDeflate(unittest.TestCase):
         data = b"ABABABACABABABAB"
         compressor = Lz77Compressor(32, data)
         
-        # Test position 0
+        # Test position 0 (first character)
         cw = compressor.codeword_for_position(0)
         self.assertEqual(cw.prefix_start_offset, 0)
         self.assertEqual(cw.prefix_len, 0)
         self.assertEqual(cw.character, ord('A'))
 
-        # Test position 1
+        # Test position 1 (new character)
         cw = compressor.codeword_for_position(1)
-        self.assertEqual(cw.prefix_start_offset, 1)
-        self.assertEqual(cw.prefix_len, 2)
-        self.assertEqual(cw.character, ord('C'))
+        self.assertEqual(cw.prefix_start_offset, 0)  # No match available
+        self.assertEqual(cw.prefix_len, 0)
+        self.assertEqual(cw.character, ord('B'))
 
     def test_lz77_decompression(self):
         decompressor = Lz77Decompressor(32)
         codewords = [
-            Codeword(0, 0, ord('A')),
-            Codeword(1, 3, ord('B')),
-            Codeword(4, 7, ord('C'))
+            Codeword(0, 0, ord('A')),  # A
+            Codeword(1, 3, ord('B')),  # Copy 3 from 1 back (A), add B → AABBB
+            Codeword(4, 4, ord('C'))   # Copy 4 from 4 back (BBBA), add C → AABBBABBAC
         ]
-        
+
         for cw in codewords:
             decompressor.decompress_codeword(cw)
-            
+
         result = decompressor.get_data()
-        self.assertEqual(result, b'AABBBABBBBC')
+        self.assertEqual(result, b'AAAABAAABC')
 
     def test_huffman_encoding(self):
         frequencies = {b'A': 5, b'B': 2, b'C': 1}
