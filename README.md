@@ -12,6 +12,6 @@ A Python implementation of the DEFLATE compression algorithm featuring LZ77 and 
   - Unit tests for compression components
   - Round-trip verification for various file types
 - **Benchmarking**  
-  - Performance comparison with Python's gzip
+  - Performance comparison with Python's Zlib
   - Time and compression ratio metrics
   - Visualization support
