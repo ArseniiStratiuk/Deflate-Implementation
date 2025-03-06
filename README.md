@@ -6,7 +6,7 @@ A Python implementation of the DEFLATE compression algorithm featuring LZ77 and 
 
 - **DEFLATE Compression/Decompression**
   - LZ77 with 32KB sliding window
-  - Huffman coding with dynamic tables
+  - Huffman coding
   - CLI interface for file operations
 - **Testing**
   - Unit tests for compression components
